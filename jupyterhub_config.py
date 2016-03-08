@@ -2,22 +2,14 @@
 
 c = get_config()
 
-# spawn with Docker
-c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
-c.DockerSpawner.container_image = 'singleuser'
-
-# The docker instances need access to the Hub, so the default loopback port doesn't work:
-from IPython.utils.localinterfaces import public_ips
-c.JupyterHub.hub_ip = public_ips()[0]
 c.JupyterHub.proxy_cmd = ['configurable-http-proxy', '--redirect-port', '80']
 
 
 # OAuth with GitHub
-c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
+c.JupyterHub.authenticator_class = 'oauthenticator.LocalGitHubOAuthenticator'
+c.LocalGitHubOAuthenticator.create_system_users = True
 
-c.Authenticator.whitelist = whitelist = set()
 c.Authenticator.admin_users = admin = set()
-
 c.JupyterHub.admin_access = True
 
 import os
@@ -30,7 +22,6 @@ with open(join(here, 'userlist')) as f:
             continue
         parts = line.split()
         name = parts[0]
-        whitelist.add(name)
         if len(parts) > 1 and parts[1] == 'admin':
             admin.add(name)
 
