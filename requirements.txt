@@ -1,3 +1,4 @@
 jupyterhub
 oauthenticator
-notebook
+dockerspawner
+netifaces
