@@ -1,40 +1,37 @@
-# JupyterHub demo
+# JupyterHub setup for Nike (Simula)
 
-These are the setup scripts for a demo deployment of JupyterHub,
+These are the setup scripts for a  deployment of JupyterHub at Simula,
 using GitHub OAuth and Docker spawning.
-It is currently running at https://demohub.jupyter.org
+It is currently running internally at Simula on the Nike machine.
+
+The images are currently installing fenics 1.7.0dev from [these conda recipes](https://github.com/minrk/fenics-recipes/tree/dev).
+
 
 ## Clone and install JupyterHub and dependencies
 
-    git clone https://github.com/jupyter/jupyterhub-demo /srv/jupyterhub
+    git clone https://github.com/minrk/jupyterhub-simula /srv/jupyterhub
     cd /srv/jupyterhub
-    sh install.sh
+    sudo bash install.sh
 
 ## Configure your deployment
 
-1. write `userlist`, in the form:
+1. write admins to `userlist`, in the form:
 
         mal admin
         zoe admin
         inara admin
-        wash
-        kaylee
-        jayne
-        simon
-        river
+
    Admin users will have admin access to the JupyterHub instance. 
    See `userlist.example` for an example.
+   Since Nike is only accessible on the private Simula network,
+   any GitHub account will be able to login as a user.
 
 2. set up [GitHub OAuth][] and put the variables in `env`. See `env.example` for an example.
-   The `OAUTH_CALLBACK_URL` will want to be of the form `https://YOURDOMAIN/hub/oauth_callback`
+   The `OAUTH_CALLBACK_URL` will want to be of the form `https://nike.simula.no/hub/oauth_callback`
 
 3. add your ssl cert and key in `ssl/ssl.crt` and `ssl/ssl.key`, respectively.
 
-4. apply your configuration:
-
-        ./configure.sh
-
-5. edit `jupyterhub_config.py` as appropriate
+4. edit `jupyterhub_config.py` as appropriate
 
 
 ## Start and stop JupyterHub
@@ -44,6 +41,5 @@ This sets up JupyterHub with supervisor, so you use `supervisorctl` to stop and 
     supervisorctl start jupyterhub
 
 See supervisor docs for details on managing services.
-
 
 [GitHub OAuth]: https://github.com/settings/applications/new
