@@ -1,0 +1,9 @@
+notebook>=4.1
+ipywidgets
+ipykernel>=4.3
+matplotlib
+seaborn
+pandas
+pillow
+ipyparallel>=5
+requests

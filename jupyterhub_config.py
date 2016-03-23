@@ -13,7 +13,7 @@ c.JupyterHub.authenticator_class = GitHubOAuthenticator
 c.Authenticator.admin_users = admin = set()
 c.JupyterHub.admin_access = True
 
-import os
+import os, sys
 
 join = os.path.join
 here = os.path.dirname(__file__)
@@ -30,28 +30,16 @@ c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
 
 # spawn with Docker:
 
-from tornado.gen import coroutine
-from dockerspawner import DockerSpawner
 import netifaces
 docker_ip = netifaces.ifaddresses('docker0')[netifaces.AF_INET][0]['addr']
 c.JupyterHub.hub_ip = docker_ip
 
-class MySpawner(DockerSpawner):
-    def start(self):
-        self.log.warn("Starting %s" % self.user)
-        home_dir = os.path.join('/srv/jupyterhub/home/%s' % self.user.name)
-        self.log.warn("Making %r" % home_dir)
-        os.makedirs(home_dir, exist_ok=True)
-        os.chmod('/srv/jupyterhub', 0o777)
-        os.chmod(home_dir, 0o777)
-        self.log.warn("Made %s" % home_dir)
-        self.log.warn("stat: %s" % (os.stat(home_dir), ))
-        return super().start()
-
-c.JupyterHub.spawner_class = MySpawner
+sys.path.insert(0, os.path.dirname(__file__))
+from nikespawner import NikeSpawner
+c.JupyterHub.spawner_class = NikeSpawner
 c.DockerSpawner.container_image = 'singleuser'
 c.DockerSpawner.volumes = {
-    '/srv/jupyterhub/home/{username}': '/home/jovyan',
+    '/srv/jupyterhub/home/{username}': '/home/fenics/work',
 }
 
 # ssl config
