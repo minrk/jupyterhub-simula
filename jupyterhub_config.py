@@ -39,7 +39,7 @@ from nikespawner import NikeSpawner
 c.JupyterHub.spawner_class = NikeSpawner
 c.DockerSpawner.container_image = 'singleuser'
 c.DockerSpawner.volumes = {
-    '/srv/jupyterhub/home/{username}': '/home/fenics/work',
+    '/srv/jupyterhub/work/{username}': '/home/fenics/work',
 }
 
 # ssl config

@@ -1,7 +1,8 @@
 all: install build
 
 build:
-	docker build -t singleuser docker
+	# build image, setting fenics uid to match jupyterhub
+	docker build -t singleuser --build-arg UID=$(shell id -u jupyterhub) --build-arg GID=$(shell id -g jupyterhub) docker
 
 install:
 	./install.sh

@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 USER root
 # base packages
 RUN apt-get -y update && apt-get -y install libzmq3-dev libfreetype6-dev libpng-dev python3-scipy
-# set UTF8 locale
+# set UTF8 locale (see https://bitbucket.org/fenics-project/docker/pull-requests/3)
 RUN echo "C.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
@@ -18,7 +18,8 @@ RUN $PYTHON -m pip install --upgrade setuptools pip
 ADD requirements.txt /tmp/requirements.txt
 RUN $PYTHON -m pip install -r /tmp/requirements.txt
 
-# update fenics, checking that dolfin is importable because the build utils are not trustworthy
+# update dolfin, checking that it works because the build commands don't check for success
+# See https://bitbucket.org/fenics-project/docker/pull-requests/4
 RUN rm -rf build/src/dolfin/build
 USER fenics
 RUN bash -l -c 'source ~/fenics.conf && build_dolfin && python -c "import dolfin"'
@@ -38,11 +39,13 @@ RUN wget --quiet https://github.com/krallin/tini/releases/download/v0.9.0/tini &
 
 ENTRYPOINT ["tini", "--"]
 CMD ["bash", "-l", "/srv/singleuser.sh", "--notebook-dir=work"]
-RUN apt-get -y install locales
-RUN echo "C.UTF-8 UTF-8" > /etc/locale.gen && locale-gen
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
-ENV LANGUAGE C.UTF-8
+
+ARG UID
+ARG GID
+RUN usermod -u $UID fenics \
+ && groupmod -g $GID fenics \
+ && chown -R fenics:fenics /home/fenics
+
 # switch back to fenics user
 USER fenics
 ENV SHELL /bin/bash

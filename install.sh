@@ -10,6 +10,12 @@ apt-get -y install \
   realpath \
   ruby
 
+# install docker
+which docker &>/dev/null || curl -L https://gist.githubusercontent.com/minrk/f96a162ecccd9381f355/raw/docker-debian | bash
+
+# create jupyterhub user if it doesn't exist
+id -u jupyterhub &>/dev/null || useradd -G docker jupyterhub
+
 export GROUP=jupyterhub
 export ROOT="$(realpath $(dirname $0))"
 

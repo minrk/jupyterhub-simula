@@ -1,16 +1,20 @@
+"""Spawner for Nike
+
+User work directories are mounted in /srv/jupyterhub/work/{name},
+so that work is not lost when containers are rebuilt.
+
+This makes /srv/jupyterhub/work/{name} directory prior to spawn,
+because if a volume that doesn't exist is mounted, it is owned by root and not writable by users.
+"""
+
 import os
 
 from dockerspawner import DockerSpawner
 
-root='/srv/jupyterhub'
+work = '/srv/jupyterhub/work'
 
 class NikeSpawner(DockerSpawner):
     def start(self):
-        self.log.warn("Starting %s" % self.user)
-        home_dir = os.path.join('/srv/jupyterhub/home/%s' % self.user.name)
-        self.log.warn("Making %r" % home_dir)
-        os.makedirs(home_dir, exist_ok=True)
-        os.chmod(home_dir, 0o777)
-        self.log.warn("Made %s" % home_dir)
-        self.log.warn("stat: %s" % (os.stat(home_dir), ))
+        user_dir = os.path.join(work, self.user.name)
+        os.makedirs(user_dir, exist_ok=True)
         return super().start()
