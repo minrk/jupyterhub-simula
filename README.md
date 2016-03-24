@@ -4,7 +4,7 @@ These are the setup scripts for a  deployment of JupyterHub at Simula,
 using GitHub OAuth and Docker spawning.
 It is currently running internally at Simula on the Nike machine.
 
-The images are currently installing fenics 1.7.0dev from [these conda recipes](https://github.com/minrk/fenics-recipes/tree/dev).
+The images currently install fenics 1.7.0dev for Python 3, based on fenics' dev-py3 image.
 
 
 ## Clone and install JupyterHub and dependencies
