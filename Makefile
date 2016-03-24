@@ -5,13 +5,13 @@ build:
 	docker build -t singleuser --build-arg UID=$(shell id -u jupyterhub) --build-arg GID=$(shell id -g jupyterhub) docker
 
 install:
-	./install.sh
+	sudo ./install.sh
 
 start:
-	supervisorctl start juptyerhub
+	sudo supervisorctl start juptyerhub
 
 restart:
-	supervisorctl restart jupyterhub
+	sudo supervisorctl restart jupyterhub
 
 clean-containers:
 	-docker rm -f $(shell docker ps -a | grep 'jupyter-' | awk '{print $$1}')
