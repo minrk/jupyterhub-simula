@@ -22,7 +22,7 @@ RUN $PYTHON -m pip install -r /tmp/requirements.txt
 # See https://bitbucket.org/fenics-project/docker/pull-requests/4
 RUN rm -rf build/src/dolfin/build
 USER fenics
-RUN bash -l -c 'source ~/fenics.conf && build_dolfin && python -c "import dolfin"'
+RUN bash -l -c 'source ~/fenics.env.conf && build_dolfin && python -c "import dolfin"'
 USER root
 
 # setup singleuser (copied from dockerspawner/singleuser)
