@@ -18,13 +18,6 @@ RUN $PYTHON -m pip install --upgrade setuptools pip
 ADD requirements.txt /tmp/requirements.txt
 RUN $PYTHON -m pip install -r /tmp/requirements.txt
 
-# update dolfin, checking that it works because the build commands don't check for success
-# See https://bitbucket.org/fenics-project/docker/pull-requests/4
-RUN rm -rf build/src/dolfin/build
-USER fenics
-RUN bash -l -c 'source ~/fenics.env.conf && build_dolfin && python -c "import dolfin"'
-USER root
-
 # setup singleuser (copied from dockerspawner/singleuser)
 EXPOSE 8888
 RUN wget -q https://raw.githubusercontent.com/jupyter/jupyterhub/master/scripts/jupyterhub-singleuser -O /usr/local/bin/jupyterhub-singleuser && \
@@ -48,7 +41,11 @@ RUN usermod -u $UID fenics \
 
 # switch back to fenics user
 USER fenics
+
 ENV SHELL /bin/bash
 
 # fix broken 'ipython' symlink in fenics.conf
 RUN rm -f $PREFIX/bin/ipython && ln -s $(which ipython) $PREFIX/bin/ipython
+
+# verify that dolfin works before allowing build to finish
+RUN bash -l -c '$PYTHON -c "import dolfin"'
